@@ -1,0 +1,5 @@
+# Use command "python -m pipreqs.pipreqs /folder-path" to create 
+# Requirements.txt file with necessary dependencies
+
+# pipreqs must be installed to use this
+# install with "pip install pipreqs"
