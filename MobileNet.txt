@@ -1,0 +1,4 @@
+# Image test Usage
+# python ssd_test_img.py <image path> <model path> <net type>
+# Ex:
+# python ssd_test_img.py /bdd_test_5.jpg models/mb2-ssd-lite-mp-0_686.pth mb2-ssd-lite

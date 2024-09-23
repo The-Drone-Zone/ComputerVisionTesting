@@ -3,3 +3,5 @@
 
 # pipreqs must be installed to use this
 # install with "pip install pipreqs"
+
+# Lastly, install all dependencies using "pip install -r /path-to-requirements.txt"
