@@ -54,7 +54,8 @@ def plotOverTime():
 
             # Get the boxes and track IDs
             boxes = results[0].boxes.xywh.cpu()
-            track_ids = results[0].boxes.id.int().cpu().tolist()
+            if results[0].boxes.id != None:
+                track_ids = results[0].boxes.id.int().cpu().tolist()
 
             # Visualize the results on the frame
             annotated_frame = results[0].plot()
@@ -88,5 +89,5 @@ def plotOverTime():
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    plotOverTime()
-    # tracking()
+    # plotOverTime()
+    tracking()
