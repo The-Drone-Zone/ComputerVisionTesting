@@ -18,17 +18,10 @@ TEXT_COLOR = (255, 0, 0) # red
 class MobileNetV2:
     def __init__(self):
         # Models
-        int8Model = './models/ssd_mobilenet_v2_int_8.tflite'
-        float32Model = './models/ssd_mobilenet_v2_float_32.tflite'
+        self.int8Model = './models/ssd_mobilenet_v2_int_8.tflite'
+        self.float32Model = './models/ssd_mobilenet_v2_float_32.tflite'
 
-        # Create an Object Detector object
-        base_options = python.BaseOptions(model_asset_path=float32Model)
-        runningMode = vision.RunningMode.LIVE_STREAM
-        options = vision.ObjectDetectorOptions(base_options=base_options, 
-                                            score_threshold = 0.5, 
-                                            running_mode=runningMode, 
-                                            result_callback=self.print_result)
-        self.detector = vision.ObjectDetector.create_from_options(options)
+        self.detector = None
 
         # Detection Results
         self.results = None
@@ -58,11 +51,21 @@ class MobileNetV2:
         print('Detection results {}\n{}'.format(result, timestamp_ms))
         self.results = result
 
-    def runDetection(self):
+    def runLiveDetection(self):
+        # Create an Object Detector object
+        base_options = python.BaseOptions(model_asset_path=self.float32Model)
+        runningMode = vision.RunningMode.LIVE_STREAM
+        options = vision.ObjectDetectorOptions(base_options=base_options, 
+                                            score_threshold = 0.5, 
+                                            running_mode=runningMode, 
+                                            result_callback=self.print_result)
+        self.detector = vision.ObjectDetector.create_from_options(options)
+
         # Load image
         cap = cv2.VideoCapture(0)
 
         frame_index = 0
+        timeSum = 0
 
         # Loop through video frames
         while cap.isOpened():
@@ -77,9 +80,14 @@ class MobileNetV2:
                     # calculate timestamp
                     frame_index += 1
                     frame_timestamp_ms = int(1000 * frame_index / cap.get(cv2.CAP_PROP_FPS))
+                    timer = time.time()
 
                     # Run detector
                     self.detector.detect_async(mp_image, frame_timestamp_ms)
+                    
+                    # Print time for detection
+                    print('Processing time: {} ms'.format(round((time.time() - timer) * 1000, 3)))
+                    timeSum += round((time.time() - timer) * 1000, 3)
 
                     image_copy = np.copy(mp_image.numpy_view())
                     annotated_image = self.visualize(image_copy)
@@ -93,7 +101,60 @@ class MobileNetV2:
         # Release the video capture object and close the display window
         cap.release()
         cv2.destroyAllWindows()
+        print('Average processing time: {} ms'.format(round(timeSum / frame_index, 2)))
+
+    def runVideoDetection(self):
+        # Create an Object Detector object
+        base_options = python.BaseOptions(model_asset_path=self.float32Model)
+        runningMode = vision.RunningMode.VIDEO
+        options = vision.ObjectDetectorOptions(base_options=base_options, 
+                                            score_threshold = 0.5,
+                                            running_mode=runningMode)
+        self.detector = vision.ObjectDetector.create_from_options(options)
+
+        # Load image
+        cap = cv2.VideoCapture(0)
+
+        frame_index = 0
+        timeSum = 0
+
+        # Loop through video frames
+        while cap.isOpened():
+            # Read a frame from the video
+                success, frame = cap.read()
+                
+                if success:
+                    # Convert opencv image frame to mediapipe format
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
+
+                    # calculate timestamp
+                    frame_index += 1
+                    frame_timestamp_ms = int(1000 * frame_index / cap.get(cv2.CAP_PROP_FPS))
+                    timer = time.time()
+
+                    # Run detector
+                    self.results = self.detector.detect_for_video(mp_image, frame_timestamp_ms)
+                    
+                    # Print time for detection
+                    print('Processing time: {} ms'.format(round((time.time() - timer) * 1000, 3)))
+                    timeSum += round((time.time() - timer) * 1000, 3)
+
+                    image_copy = np.copy(mp_image.numpy_view())
+                    annotated_image = self.visualize(image_copy)
+                    rgb_annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR)
+                    cv2.imshow('Detection', rgb_annotated_image)
+
+                # Break the loop if 'q' is pressed
+                if cv2.waitKey(1) & 0xFF == ord("q"):
+                    break
+
+        # Release the video capture object and close the display window
+        cap.release()
+        cv2.destroyAllWindows()
+        print('Average processing time: {} ms'.format(round(timeSum / frame_index, 2)))
 
 if __name__ == '__main__':
-     thing = MobileNetV2()
-     thing.runDetection()
+    thing = MobileNetV2()
+    # thing.runLiveDetection()
+    thing.runVideoDetection()
