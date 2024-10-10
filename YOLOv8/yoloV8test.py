@@ -2,6 +2,7 @@ import cv2
 from ultralytics import YOLO
 import numpy as np
 from collections import defaultdict
+import time
 
 def tracking():
     # Load the YOLOv8 model
@@ -10,8 +11,15 @@ def tracking():
     # Open the camera
     cap = cv2.VideoCapture(0)
 
+    # Average time
+    timeSum = 0
+    frameCounter = 0
+
     # Loop through the video frames
     while cap.isOpened():
+        # start timer
+        timer = time.time()
+
         # Read a frame from the video
         success, frame = cap.read()
 
@@ -22,6 +30,13 @@ def tracking():
 
             # Visualize the results on the frame
             annotated_frame = results[0].plot()
+
+            # Time per frame
+            currTime = round((time.time() - timer) * 1000, 2)
+            print('Time for frame: {}'.format(currTime))
+            timeSum += currTime
+            frameCounter += 1
+
             # Display the annotated frame
             cv2.imshow("YOLOv8 Tracking", annotated_frame)
 
@@ -32,6 +47,7 @@ def tracking():
     # Release the video capture object and close the display window
     cap.release()
     cv2.destroyAllWindows()
+    print('Average time: {}'.format(timeSum / frameCounter))
 
 def plotOverTime():
     # Load the YOLOv8 model
