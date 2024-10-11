@@ -56,7 +56,7 @@ class MobileNetV2:
         base_options = python.BaseOptions(model_asset_path=self.float32Model)
         runningMode = vision.RunningMode.LIVE_STREAM
         options = vision.ObjectDetectorOptions(base_options=base_options, 
-                                            score_threshold = 0.5, 
+                                            score_threshold = 0.2, 
                                             running_mode=runningMode, 
                                             result_callback=self.print_result)
         self.detector = vision.ObjectDetector.create_from_options(options)
@@ -108,7 +108,7 @@ class MobileNetV2:
         base_options = python.BaseOptions(model_asset_path=self.float32Model)
         runningMode = vision.RunningMode.VIDEO
         options = vision.ObjectDetectorOptions(base_options=base_options, 
-                                            score_threshold = 0.5,
+                                            score_threshold = 0.2,
                                             running_mode=runningMode)
         self.detector = vision.ObjectDetector.create_from_options(options)
 
@@ -156,5 +156,5 @@ class MobileNetV2:
 
 if __name__ == '__main__':
     thing = MobileNetV2()
-    # thing.runLiveDetection()
-    thing.runVideoDetection()
+    thing.runLiveDetection()
+    # thing.runVideoDetection()
