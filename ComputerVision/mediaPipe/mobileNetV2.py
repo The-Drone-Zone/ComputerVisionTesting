@@ -35,7 +35,7 @@ class MobileNetV2:
                 end_point = bbox.origin_x + bbox.width, bbox.origin_y + bbox.height
                 cv2.rectangle(image, start_point, end_point, TEXT_COLOR, 3)
 
-                # Draw Label abd score
+                # Draw Label and score
                 category = detection.categories[0]
                 category_name = category.category_name
                 probability = round(category.score, 2)
@@ -64,6 +64,14 @@ class MobileNetV2:
         # Load image
         cap = cv2.VideoCapture(0)
 
+        # Define the codec and create a VideoWriter object to save the video
+        frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = int(cap.get(cv2.CAP_PROP_FPS))
+        output_file = 'output_video.avi'  # Save video in .avi format with MJPG codec
+        fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+        out = cv2.VideoWriter(output_file, fourcc, fps, (frame_width, frame_height))
+
         frame_index = 0
         timeSum = 0
 
@@ -74,8 +82,8 @@ class MobileNetV2:
                 
                 if success:
                     # Convert opencv image frame to mediapipe format
-                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame)
+                    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Keep original for saving
+                    mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=frame_rgb)
 
                     # calculate timestamp
                     frame_index += 1
@@ -92,14 +100,20 @@ class MobileNetV2:
                     image_copy = np.copy(mp_image.numpy_view())
                     annotated_image = self.visualize(image_copy)
                     rgb_annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR)
+                    
+                    # Save the annotated frame to the video file
+                    out.write(rgb_annotated_image)
+
+                    # Show the frame with the annotations
                     cv2.imshow('Detection', rgb_annotated_image)
 
                 # Break the loop if 'q' is pressed
                 if cv2.waitKey(1) & 0xFF == ord("q"):
                     break
 
-        # Release the video capture object and close the display window
+        # Release the video capture and video writer objects and close the display window
         cap.release()
+        out.release()  # This will save the video
         cv2.destroyAllWindows()
         print('Average processing time: {} ms'.format(round(timeSum / frame_index, 2)))
 
