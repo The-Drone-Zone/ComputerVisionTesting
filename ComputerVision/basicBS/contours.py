@@ -1,4 +1,6 @@
 import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 
 class Contours:
     def detectContours(self):
@@ -210,11 +212,159 @@ class Contours:
         cap.release()
         cv2.destroyAllWindows()
 
+    def detectImageContours(self):
+        frame = cv2.imread('ComputerVision/testImages/img2.jpg')
+
+        # Convert the image to grayscale
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Apply edge detection (Canny)
+        edges = cv2.Canny(gray, 100, 200)
+
+        # Find contours
+        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # Draw the contours on the original image
+        cv2.drawContours(frame, contours, -1, (0, 255, 0), 2)
+
+        # Display the image with contours
+        cv2.imshow('Contours', frame)
+
+        # Close image
+        cv2.waitKey(0)
+        
+        cv2.destroyAllWindows()
+
+    def boxedImageContours(self):
+        frame = cv2.imread('ComputerVision/testImages/img2.jpg')
+
+        # Convert the image to grayscale
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # Apply edge detection (Canny)
+        edges = cv2.Canny(gray, 100, 200)
+
+        # Find contours
+        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        for cnt in contours:
+            # poly = cv2.approxPolyDP(cnt, 3, True)
+            x,y,w,h = cv2.boundingRect(cnt)
+            cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
+
+        # Draw the contours on the original image
+        cv2.drawContours(frame, contours, -1, (0, 255, 0), 2)
+
+        # Display the image with contours
+        cv2.imshow('Contours', frame)
+
+        # Break the loop if 'q' is pressed
+        cv2.waitKey(0)
+        
+        cv2.destroyAllWindows()
+
+    def thresholdImageContours(self):
+        frame = cv2.imread('ComputerVision/testImages/img2.jpg')
+
+        # Convert the image to grayscale
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # ret, threshold = cv2.threshold(frame, 120, 255, cv2.THRESH_BINARY)
+        threshold = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 25, 15)
+        # cv2.imshow('threshold', threshold)
+
+        # Apply edge detection (Canny)
+        edges = cv2.Canny(threshold, 100, 200)
+        # cv2.imshow('Canny', edges)
+
+        # Find contours
+        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        for cnt in contours:
+            poly = cv2.approxPolyDP(cnt, 3, True)
+            x,y,w,h = cv2.boundingRect(poly)
+            cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
+
+        # Draw the contours on the original image
+        cv2.drawContours(frame, contours, -1, (0, 255, 0), 2)
+
+        # Display the image with contours
+        cv2.imshow('Contours', frame)
+
+        cv2.waitKey(0)
+        
+        cv2.destroyAllWindows()
+
+    def blurImageContours(self):
+        frame = cv2.imread('ComputerVision/testImages/img2.jpg')
+
+        # Convert the image to grayscale
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+        # ret, threshold = cv2.threshold(frame, 120, 255, cv2.THRESH_BINARY)
+        threshold = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 25, 15)
+        # cv2.imshow('threshold', threshold)
+
+        # kernel = np.array([[0.5, 0.5, 0.5],
+        #  [0.5, 0.8, 0.5],
+        #  [0.5, 0.5, 0.5]])
+
+        # blurred = cv2.blur(gray, (5, 5))
+        # blurred = cv2.filter2D(gray, cv2.CV_8U, kernel)
+        blurred = cv2.GaussianBlur(threshold, (3, 3), 3)
+        cv2.imshow('blur', blurred)
+
+        # Apply edge detection (Canny)
+        edges = cv2.Canny(blurred, 100, 200)
+        cv2.imshow('Canny', edges)
+
+        # Find contours
+        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        for cnt in contours:
+            poly = cv2.approxPolyDP(cnt, 3, True)
+            x,y,w,h = cv2.boundingRect(poly)
+            cv2.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
+
+        # Draw the contours on the original image
+        cv2.drawContours(frame, contours, -1, (0, 255, 0), 2)
+
+        # Display the image with contours
+        # cv2.imshow('Contours', frame)
+
+        cv2.waitKey(0)
+        
+        cv2.destroyAllWindows()
+
+    def imageSegmentation(self):
+        img = cv2.imread('ComputerVision/testImages/img4.jpg')
+        rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        mask = np.zeros(img.shape[:2], np.uint8)
+        bgdModel = np.zeros((1, 65), np.float64)
+        fgdModel = np.zeros((1, 65), np.float64)
+
+        rect = (50, 50, img.shape[1] - 100, img.shape[0] - 100)
+
+        cv2.grabCut(img, mask, rect, bgdModel, fgdModel, iterCount=5, mode=cv2.GC_INIT_WITH_RECT)
+
+        mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
+        segmented_img = rgb * mask2[:, :, np.newaxis]
+
+        # plt.subplot(1, 2, 1), plt.imshow(rgb), plt.title('original image')
+        # plt.subplot(1, 2, 1), plt.imshow(segmented_img), plt.title('Segmented image')
+        plt.imshow(segmented_img)
+        plt.show()
 
 if __name__ == '__main__':
     thing = Contours()
     # thing.detectContours()
     # thing.boxedContours()
-    thing.mergedBoxedContours()
+    # thing.mergedBoxedContours()
     # thing.thresholdContours()
     # thing.adaptThresholdContours()
+    # thing.detectImageContours()
+    # thing.boxedImageContours()
+    thing.thresholdImageContours()
+    # thing.blurImageContours()
+    # thing.imageSegmentation()

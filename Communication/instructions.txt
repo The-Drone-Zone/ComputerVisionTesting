@@ -1,0 +1,2 @@
+1. Ensure that mavsdk_server is properly installed
+2. Run mavsdk_server_bin.exe -p 50051 (in mavsdk_server/bin folder)

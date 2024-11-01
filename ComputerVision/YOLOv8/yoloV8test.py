@@ -104,6 +104,29 @@ def plotOverTime():
     cap.release()
     cv2.destroyAllWindows()
 
+def imageDetection():
+    # Load the YOLOv8 model
+    model = YOLO("yolov8n.pt")
+
+    # Open the camera
+    image = cv2.imread('ComputerVision/testImages/img3.jpg')
+
+    # Run YOLOv8 model detection
+    results = model(image) # Inference (For images)
+
+    # Visualize the results on the frame
+    annotated_frame = results[0].plot()
+
+    # Display the annotated frame
+    cv2.imshow("YOLOv8 Tracking", annotated_frame)
+
+    # Break the loop
+    cv2.waitKey(0)
+
+    # close the display window
+    cv2.destroyAllWindows()
+
 if __name__ == '__main__':
     # plotOverTime()
-    tracking()
+    # tracking()
+    imageDetection()

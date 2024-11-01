@@ -168,7 +168,38 @@ class MobileNetV2:
         cv2.destroyAllWindows()
         print('Average processing time: {} ms'.format(round(timeSum / frame_index, 2)))
 
+    def imageDetection(self):
+        # Create an Object Detector object
+        base_options = python.BaseOptions(model_asset_path=self.float32Model)
+        runningMode = vision.RunningMode.IMAGE
+        options = vision.ObjectDetectorOptions(base_options=base_options, 
+                                            score_threshold = 0.2,
+                                            running_mode=runningMode)
+        self.detector = vision.ObjectDetector.create_from_options(options)
+
+        # Load image
+        # mp_image = mp.Image.create_from_file('../testImages/img3.jpg')
+        image = cv2.imread('../testImages/img2.jpg')
+                
+        # Convert opencv image frame to mediapipe format
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
+
+        # Run detector
+        self.results = self.detector.detect(mp_image)
+
+        image_copy = np.copy(mp_image.numpy_view())
+        annotated_image = self.visualize(image_copy)
+        rgb_annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_RGB2BGR)
+        cv2.imshow('Detection', rgb_annotated_image)
+
+        # Break the loop
+        cv2.waitKey(0)
+
+        # close the display window
+        cv2.destroyAllWindows()
+
 if __name__ == '__main__':
     thing = MobileNetV2()
     # thing.runLiveDetection()
-    thing.runVideoDetection()
+    # thing.runVideoDetection()
+    thing.imageDetection()
