@@ -127,7 +127,7 @@ class MobileNetV2:
         self.detector = vision.ObjectDetector.create_from_options(options)
 
         # Load image
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture('../testVideos/video2.mp4')
 
         frame_index = 0
         timeSum = 0
@@ -201,5 +201,5 @@ class MobileNetV2:
 if __name__ == '__main__':
     thing = MobileNetV2()
     # thing.runLiveDetection()
-    # thing.runVideoDetection()
-    thing.imageDetection()
+    thing.runVideoDetection()
+    # thing.imageDetection()

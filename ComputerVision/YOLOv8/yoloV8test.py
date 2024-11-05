@@ -9,7 +9,7 @@ def tracking():
     model = YOLO("yolov8n.pt")
 
     # Open the camera
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture('../testVideos/video2.mp4')
 
     # Average time
     timeSum = 0
@@ -109,7 +109,7 @@ def imageDetection():
     model = YOLO("yolov8n.pt")
 
     # Open the camera
-    image = cv2.imread('ComputerVision/testImages/img3.jpg')
+    image = cv2.imread('../testImages/img3.jpg')
 
     # Run YOLOv8 model detection
     results = model(image) # Inference (For images)
@@ -128,5 +128,5 @@ def imageDetection():
 
 if __name__ == '__main__':
     # plotOverTime()
-    # tracking()
-    imageDetection()
+    tracking()
+    # imageDetection()
