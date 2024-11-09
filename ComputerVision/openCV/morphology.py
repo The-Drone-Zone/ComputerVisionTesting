@@ -141,5 +141,5 @@ def videoMorphology():
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    # imageMorphology()
-    videoMorphology()
+    imageMorphology()
+    # videoMorphology()
