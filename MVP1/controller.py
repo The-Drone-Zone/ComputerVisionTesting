@@ -22,6 +22,7 @@ def runVideo():
     while True:
         # start timer
         timer = time.time()
+        
         obstacles = imageAnalysis.processVideoFrame()
         display.plotVideoFrame(obstacles)
 
