@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+from obstacle import BoundedObstacle
 
-class Pipeline:
+class ImageAnalysis:
     def __init__(self):
         self.cap = None
         self.frame = None
@@ -18,6 +19,9 @@ class Pipeline:
 
     def initCamera(self):
         self.cap = cv2.VideoCapture(0)
+
+    def releaseCamera(self):
+        self.cap.release()
 
     def loadFrame(self):
         success, self.frame = self.cap.read()
@@ -114,6 +118,7 @@ class Pipeline:
         return contours
 
     def boundingBoxes(self, contours):
+        obstacles = []
         # Draw bounding boxes
         for cnt in contours:
             # # Upright bounding boxes
@@ -131,6 +136,12 @@ class Pipeline:
                 box = cv2.boxPoints(rect)
                 box = np.int0(box)
                 cv2.drawContours(self.original,[box],0,(0,0,255),2)
+                obstacle = BoundedObstacle()
+                obstacle.setRect(rect)
+                obstacle.setCorners(box)
+                obstacles.append(obstacle)
+        
+        return obstacles
 
     def featureDetection(self):
         
@@ -164,26 +175,48 @@ class Pipeline:
 
         return mask, p0, old_frame
 
-    def process(self): #Return location of objects
-        pass
+    def processImage(self, imgPath): # Returns list of BoundedObstacle objects
+        contours = obstacles = []
+        self.loadImage(imgPath)
+        self.grayscale()
+        self.blur()
+        self.threshold()
+        self.morphology()
+        self.edgeDetection()
+        # pipeline.displayImage('other')
+        contours = self.contours()
+        obstacles = self.boundingBoxes(contours)
+        self.displayImage('rgb')
+        return obstacles
+    
+    def processVideoFrame(self): # Returns list of BoundedObstacle objects
+        contours = obstacles = []
+        self.loadFrame()
+        self.grayscale()
+        # self.blur()
+        # self.threshold()
+        self.morphology()
+        self.edgeDetection()
+        # self.displayFrame('other')
+        contours = self.contours()
+        obstacles = self.boundingBoxes(contours)
+        self.displayFrame('rgb')
+        return obstacles
 
-    def display(self, type):
+    def displayImage(self, type):
         if (type == 'rgb'):
-            cv2.imshow('Image', self.original)
+            cv2.imshow('Processed Image', self.original)
         else:
-            cv2.imshow('Image', self.frame)
+            cv2.imshow('Processed Image', self.frame)
 
         cv2.waitKey(0)
 
+    def displayFrame(self, type):
+        if (type == 'rgb'):
+            cv2.imshow('Processed Image', self.original)
+        else:
+            cv2.imshow('Processed Image', self.frame)
+
 if __name__ == '__main__':
-    pipeline = Pipeline()
-    pipeline.loadImage('ComputerVision/testImages/img2.jpg')
-    pipeline.grayscale()
-    pipeline.blur()
-    # pipeline.threshold()
-    # pipeline.morphology()
-    pipeline.edgeDetection()
-    # pipeline.display('other')
-    contours = pipeline.contours()
-    # pipeline.boundingBoxes(contours)
-    pipeline.display('rgb')
+    analysis = ImageAnalysis()
+    obstacles = analysis.processImage('ComputerVision/testImages/img2.jpg')
