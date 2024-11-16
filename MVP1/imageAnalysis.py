@@ -17,8 +17,8 @@ class ImageAnalysis:
                     maxLevel = 2,
                     criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
-    def initCamera(self):
-        self.cap = cv2.VideoCapture(0)
+    def initCamera(self, input):
+        self.cap = cv2.VideoCapture(input)
 
     def releaseCamera(self):
         self.cap.release()
@@ -143,12 +143,19 @@ class ImageAnalysis:
         
         return obstacles
 
-    def featureDetection(self):
-        
-        keypoints = self.fast.detect(self.frame, None)
+    def featureDetection(self, frame):
+    
+        # Take original frame and find corners in it
+        original_gray = cv2.cvtColor(self.original, cv2.COLOR_BGR2GRAY)
+        # Convert keypoints to a list of coordinates (needed by calcOpticalFlowPyrLK)
+        keypoints = self.fast.detect(original_gray, None)
         self.frame = cv2.drawKeypoints(self.frame, keypoints, None, color=(255,0,0))
         np_points = np.array([[kp.pt] for kp in keypoints], dtype=np.float32)
-        return np_points
+
+        # Create a mask image for drawing purposes
+        mask = np.zeros_like(original_gray)
+        
+        return np_points, mask
 
     # mask needs to be initialized outside of function
     def opticalFlow(self, p0, mask):
@@ -194,7 +201,7 @@ class ImageAnalysis:
         self.loadFrame()
         self.grayscale()
         # self.blur()
-        # self.threshold()
+        self.threshold()
         self.morphology()
         self.edgeDetection()
         # self.displayFrame('other')

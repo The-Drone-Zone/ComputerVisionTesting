@@ -9,11 +9,13 @@ def runImage(imgPath):
     display = DataDisplay()
     display.plotImage(obstacles)
 
-def runVideo():
+def runVideo(input):
     imageAnalysis = ImageAnalysis()
-    imageAnalysis.initCamera()
+    imageAnalysis.initCamera(input)
 
     display = DataDisplay()
+
+    imageTracker = []
 
     # Average time
     timeSum = 0
@@ -24,6 +26,23 @@ def runVideo():
         timer = time.time()
         
         obstacles = imageAnalysis.processVideoFrame()
+
+        # WIP for tracking (camera)
+        # for obstacle in imageTracker list
+            # optical flow (for single obstacle)
+            # if points matched > zero and still within bounds (10-20m box)
+                # increase frames detected count += 1
+                # if frames detected count >= 5 
+                    # STOP DRONE
+                    # remove from imageTracker list
+            # else
+                # remove from imageTracker list
+        # for obstacle in obstacles
+            # if within certain bounds of camera (10-20m box)
+                # featureDetection (pass cropped image OR crop in function)
+                # set frames detected count = 1
+                # append to imageTracker list
+
         display.plotVideoFrame(obstacles)
 
         # Time per frame
@@ -41,4 +60,5 @@ def runVideo():
 
 if __name__ == '__main__':
     # runImage('ComputerVision/testImages/img2.jpg')
-    runVideo()
+    runVideo('ComputerVision/testVideos/video3.mp4')
+    # runVideo(0)
