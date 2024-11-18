@@ -146,9 +146,6 @@ class ImageAnalysis:
     def featureDetection(self, obstacle):
         # Compute the bounding rectangle that encompasses the corners
         x, y, w, h = cv2.boundingRect(obstacle.corners)
-
-        # Crop the image to the bounding rectangle
-        # cropped_image = self.original[y:y+h, x:x+w]
     
         # Take cropped image and find features in it
         cropped_gray = cv2.cvtColor(self.original, cv2.COLOR_BGR2GRAY)
