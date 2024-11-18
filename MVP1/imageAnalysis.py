@@ -7,6 +7,7 @@ class ImageAnalysis:
     def __init__(self):
         self.cap = None
         self.frame = None
+        self.old_frame = None
         self.original = None
 
         # Initialize FAST feature detection object
@@ -148,14 +149,13 @@ class ImageAnalysis:
         x, y, w, h = cv2.boundingRect(obstacle.corners)
     
         # Take cropped image and find features in it
-        cropped_gray = cv2.cvtColor(self.original, cv2.COLOR_BGR2GRAY)
-        keypoints = self.fast.detect(cropped_gray, None)
+        keypoints = self.fast.detect(self.frame, None)
         new_kp = []
         # only for visualization DELETE LATER
         for kp in keypoints:
             if (x <= kp.pt[0] <= x + w and y <= kp.pt[1] <= y + h):
                 new_kp.append(kp)
-        self.original = cv2.drawKeypoints(self.original, new_kp, None, color=(255,255,0))
+        # self.original = cv2.drawKeypoints(self.original, new_kp, None, color=(255,255,0))
         # Convert keypoints to a list of coordinates (needed by calcOpticalFlowPyrLK)
         # np_points = np.array([[kp.pt] for kp in keypoints], dtype=np.float32)
         # Filter the keypoints and create the numpy array simultaneously
@@ -171,10 +171,13 @@ class ImageAnalysis:
         return TrackedObject(np_points)
 
     # mask needs to be initialized outside of function
-    def opticalFlow(self, p0, mask):
+    # def opticalFlow(self, p0, mask):
+    def opticalFlow(self, obstacle):
+
+        p0 = obstacle.points
 
         # calculate optical flow
-        p1, st, err = cv2.calcOpticalFlowPyrLK(old_frame, self.frame, p0, None, **self.lk_params)
+        p1, st, err = cv2.calcOpticalFlowPyrLK(self.old_frame, self.frame, p0, None, **self.lk_params)
 
         # Select good points
         if p1 is not None:
@@ -185,15 +188,15 @@ class ImageAnalysis:
         for i, (new, old) in enumerate(zip(good_new, good_old)):
             a, b = new.ravel()
             c, d = old.ravel()
-            mask = cv2.line(mask, (int(a), int(b)), (int(c), int(d)), [128, 128, 128], 2)
-            self.frame = cv2.circle(self.frame, (int(a), int(b)), 5, [128, 128, 128], -1)
-        self.frame = cv2.add(self.frame, mask)
+            # mask = cv2.line(mask, (int(a), int(b)), (int(c), int(d)), [128, 128, 128], 2)
+            self.original = cv2.circle(self.original, (int(a), int(b)), 2, [255, 0, 0], -1)
+        # self.frame = cv2.add(self.frame, mask)
 
         # Now update the previous frame and previous points
-        old_frame = self.frame.copy()
-        p0 = good_new.reshape(-1, 1, 2)
+        self.old_frame = self.frame.copy()
+        obstacle.points = good_new.reshape(-1, 1, 2)
 
-        return mask, p0, old_frame
+        # return mask
 
     def processImage(self, imgPath): # Returns list of BoundedObstacle objects
         contours = obstacles = []
@@ -233,7 +236,7 @@ class ImageAnalysis:
 
     def displayFrame(self, type):
         if (type == 'rgb'):
-            cv2.rectangle(self.original, (100, 100), (500, 250), color=(255, 0, 0), thickness=5)
+            cv2.rectangle(self.original, (200, 100), (450, 200), color=(255, 0, 0), thickness=5)
             cv2.imshow('Processed Image', self.original)
         else:
             cv2.imshow('Processed Image', self.frame)

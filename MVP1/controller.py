@@ -16,7 +16,7 @@ def runVideo(input):
     display = DataDisplay()
 
     imageTracker = []
-    screen_bounds = (100, 100, 500, 250)
+    screen_bounds = (200, 100, 450, 200)
     x_min, y_min, x_max, y_max = screen_bounds
 
     # Average time
@@ -30,24 +30,30 @@ def runVideo(input):
         obstacles = imageAnalysis.processVideoFrame()
 
         # WIP for tracking (camera)
-        # for obstacle in imageTracker:
+        for obstacle in imageTracker:
             # optical flow (for single obstacle)
-            # if points matched > zero and still within bounds (10-20m box)
-                # increase frames detected count += 1
-                # if frames detected count >= 5 
-                    # STOP DRONE
-                    # remove from imageTracker list
-            # else
-                # remove from imageTracker list
+            imageAnalysis.opticalFlow(obstacle)
+            # if points matched > zero and center still within bounds (10-20m box)
+            if len(obstacle.points) > 0 and cv2.minAreaRect(obstacle.points)[0]:
+                obstacle.trackCount += 1
+                if obstacle.trackCount >= 5:
+                    print("STOP DRONE")
+                    imageTracker.remove(obstacle)
+            else:
+                imageTracker.remove(obstacle)
+                print('remove out of bounds object')
         for obstacle in obstacles:
             # if within certain bounds of camera (10-20m box)
             if (x_min <= obstacle.x <= x_max and y_min <= obstacle.y <= y_max):
                 # does feature detection for one obstacle, returns new TrackedObject, appends to list
-                imageTracker.append(imageAnalysis.featureDetection(obstacle))
-                # set frames detected count = 1 (DONE ON TrackedObject initialization)
+                trackedObject = imageAnalysis.featureDetection(obstacle)
+                if len(trackedObject.points) > 0:
+                    imageTracker.append(trackedObject)
+                    # set frames detected count = 1 (DONE ON TrackedObject initialization)
 
         imageAnalysis.displayFrame('rgb')
         display.plotVideoFrame(obstacles)
+        imageAnalysis.old_frame = imageAnalysis.frame.copy()
 
         # Time per frame
         currTime = round((time.time() - timer) * 1000, 2)
