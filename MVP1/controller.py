@@ -16,6 +16,8 @@ def runVideo(input):
     display = DataDisplay()
 
     imageTracker = []
+    screen_bounds = (100, 100, 500, 250)
+    x_min, y_min, x_max, y_max = screen_bounds
 
     # Average time
     timeSum = 0
@@ -28,7 +30,7 @@ def runVideo(input):
         obstacles = imageAnalysis.processVideoFrame()
 
         # WIP for tracking (camera)
-        # for obstacle in imageTracker list
+        # for obstacle in imageTracker:
             # optical flow (for single obstacle)
             # if points matched > zero and still within bounds (10-20m box)
                 # increase frames detected count += 1
@@ -37,12 +39,14 @@ def runVideo(input):
                     # remove from imageTracker list
             # else
                 # remove from imageTracker list
-        # for obstacle in obstacles
+        for obstacle in obstacles:
             # if within certain bounds of camera (10-20m box)
-                # featureDetection (pass cropped image OR crop in function)
-                # set frames detected count = 1
-                # append to imageTracker list
+            if (x_min <= obstacle.x <= x_max and y_min <= obstacle.y <= y_max):
+                # does feature detection for one obstacle, returns new TrackedObject, appends to list
+                imageTracker.append(imageAnalysis.featureDetection(obstacle))
+                # set frames detected count = 1 (DONE ON TrackedObject initialization)
 
+        imageAnalysis.displayFrame('rgb')
         display.plotVideoFrame(obstacles)
 
         # Time per frame
@@ -60,5 +64,5 @@ def runVideo(input):
 
 if __name__ == '__main__':
     # runImage('ComputerVision/testImages/img2.jpg')
-    runVideo('ComputerVision/testVideos/video3.mp4')
-    # runVideo(0)
+    # runVideo('ComputerVision/testVideos/video3.mp4')
+    runVideo(0)

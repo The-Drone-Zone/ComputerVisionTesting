@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-from obstacle import BoundedObstacle
+from obstacle import BoundedObstacle, TrackedObject
 
 class ImageAnalysis:
     def __init__(self):
@@ -143,19 +143,35 @@ class ImageAnalysis:
         
         return obstacles
 
-    def featureDetection(self, frame):
+    def featureDetection(self, obstacle):
+        # Compute the bounding rectangle that encompasses the corners
+        x, y, w, h = cv2.boundingRect(obstacle.corners)
+
+        # Crop the image to the bounding rectangle
+        # cropped_image = self.original[y:y+h, x:x+w]
     
-        # Take original frame and find corners in it
-        original_gray = cv2.cvtColor(self.original, cv2.COLOR_BGR2GRAY)
+        # Take cropped image and find features in it
+        cropped_gray = cv2.cvtColor(self.original, cv2.COLOR_BGR2GRAY)
+        keypoints = self.fast.detect(cropped_gray, None)
+        new_kp = []
+        # only for visualization DELETE LATER
+        for kp in keypoints:
+            if (x <= kp.pt[0] <= x + w and y <= kp.pt[1] <= y + h):
+                new_kp.append(kp)
+        self.original = cv2.drawKeypoints(self.original, new_kp, None, color=(255,255,0))
         # Convert keypoints to a list of coordinates (needed by calcOpticalFlowPyrLK)
-        keypoints = self.fast.detect(original_gray, None)
-        self.frame = cv2.drawKeypoints(self.frame, keypoints, None, color=(255,0,0))
-        np_points = np.array([[kp.pt] for kp in keypoints], dtype=np.float32)
+        # np_points = np.array([[kp.pt] for kp in keypoints], dtype=np.float32)
+        # Filter the keypoints and create the numpy array simultaneously
+        np_points = np.array(
+            [[kp.pt] for kp in keypoints if (x <= kp.pt[0] <= x + w and y <= kp.pt[1] <= y + h)],
+            dtype=np.float32
+        )
 
         # Create a mask image for drawing purposes
-        mask = np.zeros_like(original_gray)
+        # mask = np.zeros_like(original_gray)
         
-        return np_points, mask
+        # return np_points, mask
+        return TrackedObject(np_points)
 
     # mask needs to be initialized outside of function
     def opticalFlow(self, p0, mask):
@@ -207,7 +223,7 @@ class ImageAnalysis:
         # self.displayFrame('other')
         contours = self.contours()
         obstacles = self.boundingBoxes(contours)
-        self.displayFrame('rgb')
+        # self.displayFrame('rgb')
         return obstacles
 
     def displayImage(self, type):
@@ -220,6 +236,7 @@ class ImageAnalysis:
 
     def displayFrame(self, type):
         if (type == 'rgb'):
+            cv2.rectangle(self.original, (100, 100), (500, 250), color=(255, 0, 0), thickness=5)
             cv2.imshow('Processed Image', self.original)
         else:
             cv2.imshow('Processed Image', self.frame)

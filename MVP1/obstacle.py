@@ -24,3 +24,10 @@ class BoundedObstacle:
         print('Angle: {}'.format(self.angle))
         print('Corners: {}'.format(self.corners))
         print()
+
+class TrackedObject:
+    def __init__(self, np_points):
+        self.corners = None
+        self.points = np_points
+        self.mask = None
+        self.trackCount = 1
