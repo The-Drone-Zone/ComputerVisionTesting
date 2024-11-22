@@ -70,5 +70,5 @@ def runVideo(input):
 
 if __name__ == '__main__':
     # runImage('ComputerVision/testImages/img2.jpg')
-    # runVideo('ComputerVision/testVideos/video3.mp4')
-    runVideo(0)
+    runVideo('ComputerVision/testVideos/video4.mp4')
+    # runVideo(0)
