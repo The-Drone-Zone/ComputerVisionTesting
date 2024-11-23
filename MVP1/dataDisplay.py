@@ -17,7 +17,7 @@ class DataDisplay:
             cv2.drawContours(blank_img,[obstacle.corners],0,(0,0,255),2)
             # Add depth annotation at the center (CHANGE TO HAVE LIDAR DEPTH)
             font = cv2.FONT_HERSHEY_SIMPLEX
-            cv2.putText(blank_img, str(random.randint(0, 40)), (obstacle.x, obstacle.y), font, 1, (255, 255, 255), 2)
+            cv2.putText(blank_img, str(round(obstacle.distance, 2)), (obstacle.x, obstacle.y), font, 1, (255, 255, 255), 2)
 
         cv2.imshow('Analysis Results', blank_img)
 

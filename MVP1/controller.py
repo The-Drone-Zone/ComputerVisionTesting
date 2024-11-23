@@ -25,13 +25,15 @@ def runImage(imgPath, scanPath):
     # Map image and lidar together
     mapImageLidar(imageObstacles, lidarPoints)
 
+    lidarAnalysis.showImageScanPoints(imageAnalysis.original)
     display.plotImage(imageObstacles)
 
-def runVideo(input):
+def runVideo(videoIn, lidarIn):
     imageAnalysis = ImageAnalysis()
-    imageAnalysis.initCamera(input)
-
     display = DataDisplay()
+    lidarAnalysis = LidarAnalysis()
+
+    imageAnalysis.initCamera(videoIn)
 
     # For tracking image features across frames
     imageTracker = []
@@ -47,6 +49,9 @@ def runVideo(input):
         timer = time.time()
         
         imageObstacles = imageAnalysis.processVideoFrame()
+        lidarPoints = lidarAnalysis.getScan(lidarIn)
+        # Map image and lidar together
+        mapImageLidar(imageObstacles, lidarPoints)
 
         # # WIP for tracking (camera)
         # for obstacle in imageTracker:
@@ -70,7 +75,8 @@ def runVideo(input):
         #             imageTracker.append(trackedObject)
         #             # set frames detected count = 1 (DONE ON TrackedObject initialization)
 
-        imageAnalysis.displayFrame('rgb')
+        # imageAnalysis.displayFrame('rgb')
+        lidarAnalysis.showFrameScanPoints(imageAnalysis.original)
         display.plotVideoFrame(imageObstacles)
         imageAnalysis.old_frame = imageAnalysis.frame.copy()
 
@@ -89,9 +95,9 @@ def runVideo(input):
 
 if __name__ == '__main__':
     imagePath = 'ComputerVision/testImages/img2.jpg'
-    videoPath = 'ComputerVision/testVideos/video4.mp4'
+    videoPath = 'ComputerVision/testVideos/video3.mp4'
     lidarDataPath = 'poly_lidar_reading_dataset.csv'
 
-    runImage(imagePath, lidarDataPath)
-    # runVideo(videoPath)
-    # runVideo(0)
+    # runImage(imagePath, lidarDataPath)
+    runVideo(videoPath, lidarDataPath)
+    # runVideo(0, lidarDataPath)

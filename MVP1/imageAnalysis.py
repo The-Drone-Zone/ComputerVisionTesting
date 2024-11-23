@@ -209,7 +209,7 @@ class ImageAnalysis:
         # pipeline.displayImage('other')
         contours = self.contours()
         obstacles = self.boundingBoxes(contours)
-        self.displayImage('rgb')
+        # self.displayImage('rgb')
         return obstacles
     
     def processVideoFrame(self): # Returns list of BoundedObstacle objects
