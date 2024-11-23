@@ -9,15 +9,17 @@ class LidarAnalysis:
     def getScan(self, input):
         # Read the CSV file into a DataFrame
         self.data = pd.read_csv(input)
+        return self.data
 
-    def showScanPoints(self):
-        # Create a blank image (black canvas)
-        img_height, img_width = 500, 650
-        blank_img = np.zeros((img_height, img_width, 3), dtype=np.uint8)
+    def showScanPoints(self, img=None):
+        if img == None:
+            # Create a blank image (black canvas)
+            img_height, img_width = 500, 650
+            img = np.zeros((img_height, img_width, 3), dtype=np.uint8)
 
         # Loop through each row
         for index, row in self.data.iterrows():
-            img = cv2.circle(blank_img, (int(row["x_position"]), int(row["y_position"])), 2, [255, 0, 0], -1)
+            img = cv2.circle(img, (int(row["x_position"]), int(row["y_position"])), 2, [255, 0, 0], -1)
             # Add depth to points
             if index % 5 == 0:
                 font = cv2.FONT_HERSHEY_SIMPLEX
@@ -29,5 +31,5 @@ class LidarAnalysis:
 
 if __name__ == '__main__':
     thing = LidarAnalysis()
-    thing.getScan('lidar_reading_dataset.csv')
+    thing.getScan('poly_lidar_reading_dataset.csv')
     thing.showScanPoints()

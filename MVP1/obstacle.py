@@ -6,6 +6,7 @@ class BoundedObstacle:
         self.height = None
         self.angle = None
         self.corners = None  # Ex: [[x, y], [x, y], [x, y], [x, y]]
+        self.distance = -1
 
     def setRect(self, rect):
         self.x = round(rect[0][0])

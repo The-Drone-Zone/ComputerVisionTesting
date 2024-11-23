@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 
 # Constants
-max_lidar_distance = 50
-max_distance = 100.0  # Maximum LiDAR reading in meters
+max_lidar_distance = 50 # Maximum LiDAR reading in meters
+max_distance = 100.0 # Length of lines
 num_points_per_line = 25  # Points per line
 num_scans = 1  # Number of scans
 

@@ -22,6 +22,21 @@ class DataDisplay:
         cv2.imshow('Analysis Results', blank_img)
 
     def plotImage(self, obstacles):
+        # # Create a blank image (black canvas)
+        # img_height, img_width = 500, 650
+        # blank_img = np.zeros((img_height, img_width, 3), dtype=np.uint8)
+
+        # for obstacle in obstacles:
+        #     # Create bounding box
+        #     cv2.drawContours(blank_img,[obstacle.corners],0,(0,0,255),2)
+        #     # Add depth annotation at the center (CHANGE TO HAVE LIDAR DEPTH)
+        #     font = cv2.FONT_HERSHEY_SIMPLEX
+        #     cv2.putText(blank_img, str(round(obstacle.distance, 2)), (obstacle.x, obstacle.y), font, 1, (255, 255, 255), 2)
+
+        # cv2.imshow('Analysis Results', blank_img)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
+
         # Create a figure and axis
         fig, ax = plt.subplots()
 
@@ -31,7 +46,7 @@ class DataDisplay:
             # Add polygons to the plot
             ax.add_patch(rect)
             # Add depth annotation at the center (CHANGE TO HAVE LIDAR DEPTH)
-            ax.text(obstacle.x, obstacle.y, f"{random.randint(0, 40)}", color='blue', fontsize=12, ha='center', va='center')
+            ax.text(obstacle.x, obstacle.y, f"{round(obstacle.distance, 2)}", color='blue', fontsize=12, ha='center', va='center')
 
         # Set axis limits
         ax.autoscale()
