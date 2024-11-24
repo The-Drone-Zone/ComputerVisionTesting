@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 # Constants
-total_points = 500
+total_points = 1000
 max_lidar_distance = 50 # Maximum LiDAR reading in meters
 line_length = 175  # Length of lines / 2 (horiz FOV)
 num_lines = 12 # Number of horizontal line scans
@@ -34,7 +34,7 @@ for scan_id in range(num_scans):
             y = (line_id * (scan_height / num_lines)) + (y_counter * ((scan_height/num_lines)/num_points_per_line))
             distances.append(simulate_lidar_reading())
             x_positions.append(x + 300)
-            y_positions.append(y + 150)
+            y_positions.append(y + 100)
             scan_numbers.append(scan_id)
             line_num.append("horizontal")
             y_counter += 1

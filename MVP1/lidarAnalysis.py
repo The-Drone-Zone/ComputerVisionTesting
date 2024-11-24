@@ -47,5 +47,5 @@ class LidarAnalysis:
 
 if __name__ == '__main__':
     thing = LidarAnalysis()
-    thing.getScan('lidar_reading_dataset.csv')
+    thing.getScan('poly_lidar_reading_dataset.csv')
     thing.showImageScanPoints()
