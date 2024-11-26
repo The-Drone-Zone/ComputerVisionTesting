@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 # Constants
-total_points = 1000
+total_points = 500
 max_lidar_distance = 50 # Maximum LiDAR reading in meters
 line_length = 175  # Length of lines / 2 (horiz FOV)
 num_lines = 12 # Number of horizontal line scans

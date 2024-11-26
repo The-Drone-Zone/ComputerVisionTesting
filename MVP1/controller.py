@@ -94,8 +94,8 @@ def runVideo(videoIn, lidarIn):
                     imageTracker.append(trackedObject)
                     # set frames detected count = 1 (DONE ON TrackedObject initialization)
 
-        lidarAnalysis.showFrameScanPoints(imageAnalysis.original)
-        # imageAnalysis.displayFrame('rgb')
+        # lidarAnalysis.showFrameScanPoints(imageAnalysis.original)
+        imageAnalysis.displayFrame('rgb')
         display.plotVideoFrame(imageObstacles)
         imageAnalysis.old_frame = imageAnalysis.frame.copy()
 
@@ -115,7 +115,7 @@ def runVideo(videoIn, lidarIn):
 if __name__ == '__main__':
     imagePath = 'ComputerVision/testImages/img2.jpg'
     videoPath = 'ComputerVision/testVideos/video3.mp4'
-    lidarDataPath = 'poly_lidar_reading_dataset.csv'
+    lidarDataPath = 'lidar_reading_dataset.csv'
 
     # runImage(imagePath, lidarDataPath)
     runVideo(videoPath, lidarDataPath)

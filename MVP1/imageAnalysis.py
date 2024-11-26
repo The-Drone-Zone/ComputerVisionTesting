@@ -236,7 +236,7 @@ class ImageAnalysis:
 
     def displayFrame(self, type):
         if (type == 'rgb'):
-            cv2.rectangle(self.original, (200, 100), (450, 200), color=(255, 0, 0), thickness=5)
+            # cv2.rectangle(self.original, (200, 100), (450, 200), color=(255, 0, 0), thickness=5)
             cv2.imshow('Processed Image', self.original)
         else:
             cv2.imshow('Processed Image', self.frame)

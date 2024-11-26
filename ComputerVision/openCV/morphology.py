@@ -8,7 +8,7 @@ def imageMorphology():
     fig, axes = plt.subplots(2, 3, figsize=(13, 8))
     fig.suptitle("Image Processing Steps", fontsize=16)
 
-    frame = cv2.imread('ComputerVision/testImages/img2.jpg')
+    frame = cv2.imread('ComputerVision/testImages/img5.jpg')
 
     orig = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     axes[0, 0].imshow(orig)
@@ -22,18 +22,18 @@ def imageMorphology():
     # axes[0, 0].axis("off")
 
     # # ret, threshold = cv2.threshold(frame, 120, 255, cv2.THRESH_BINARY)
-    threshold = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 51, 10)
+    threshold = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 75, 15)
     # cv2.imshow('threshold', threshold)
     axes[0, 1].imshow(threshold, cmap="gray")
     axes[0, 1].set_title("Threshold")
     axes[0, 1].axis("off")
 
     # Apply Morphology
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     morph = cv2.dilate(threshold,kernel,iterations = 1)
     # morph = cv2.morphologyEx(threshold, cv2.MORPH_OPEN, kernel)
     axes[0, 2].imshow(morph, cmap="gray")
-    axes[0, 2].set_title("Morphology")
+    axes[0, 2].set_title("Dilation")
     axes[0, 2].axis("off")
 
     # Apply edge detection (Canny)
@@ -64,7 +64,7 @@ def imageMorphology():
             # cv2.rectangle(frame, (x,y), (x+w,y+h), (255, 0, 0), 2)
         rect = cv2.minAreaRect(cnt)
         # Check if width * height > minArea
-        if rect[1][0] * rect[1][1] > 0:
+        if rect[1][0] * rect[1][1] > 250:
             box = cv2.boxPoints(rect)
             box = np.int0(box)
             cv2.drawContours(boxedImage,[box],0,(0,0,255),2)
