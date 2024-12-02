@@ -21,7 +21,7 @@ class LidarAnalysis:
         for index, row in self.data.iterrows():
             img = cv2.circle(img, (int(row["x_position"]), int(row["y_position"])), 3, [255, 255, 0], -1)
             # Add depth to points
-            if index % 70 == 0:
+            if index % 13 == 0:
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 cv2.putText(img, str(round(row["distance"], 1)), (int(row["x_position"]), int(row["y_position"]) - 8), font, 0.4, (255, 255, 255), 2)
 

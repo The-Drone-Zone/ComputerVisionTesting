@@ -118,5 +118,5 @@ if __name__ == '__main__':
     lidarDataPath = 'lidar_reading_dataset.csv'
 
     # runImage(imagePath, lidarDataPath)
-    runVideo(videoPath, lidarDataPath)
-    # runVideo(0, lidarDataPath)
+    # runVideo(videoPath, lidarDataPath)
+    runVideo(0, lidarDataPath)

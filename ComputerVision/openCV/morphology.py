@@ -5,7 +5,7 @@ import random
 
 def imageMorphology():
     # Display the images with matplotlib
-    fig, axes = plt.subplots(2, 3, figsize=(13, 8))
+    fig, axes = plt.subplots(2, 4, figsize=(13, 5))
     fig.suptitle("Image Processing Steps", fontsize=16)
 
     frame = cv2.imread('ComputerVision/testImages/img5.jpg')
@@ -17,24 +17,24 @@ def imageMorphology():
 
     # # Convert the image to grayscale
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # axes[0, 0].imshow(gray, cmap="gray")
-    # axes[0, 0].set_title("Grayscale")
-    # axes[0, 0].axis("off")
+    axes[0, 1].imshow(gray, cmap="gray")
+    axes[0, 1].set_title("Grayscale")
+    axes[0, 1].axis("off")
 
     # # ret, threshold = cv2.threshold(frame, 120, 255, cv2.THRESH_BINARY)
     threshold = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 75, 15)
     # cv2.imshow('threshold', threshold)
-    axes[0, 1].imshow(threshold, cmap="gray")
-    axes[0, 1].set_title("Threshold")
-    axes[0, 1].axis("off")
+    axes[0, 2].imshow(threshold, cmap="gray")
+    axes[0, 2].set_title("Threshold")
+    axes[0, 2].axis("off")
 
     # Apply Morphology
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
     morph = cv2.dilate(threshold,kernel,iterations = 1)
     # morph = cv2.morphologyEx(threshold, cv2.MORPH_OPEN, kernel)
-    axes[0, 2].imshow(morph, cmap="gray")
-    axes[0, 2].set_title("Dilation")
-    axes[0, 2].axis("off")
+    axes[0, 3].imshow(morph, cmap="gray")
+    axes[0, 3].set_title("Dilation")
+    axes[0, 3].axis("off")
 
     # Apply edge detection (Canny)
     edges = cv2.Canny(morph, 100, 200)
@@ -47,7 +47,7 @@ def imageMorphology():
 
     # # Draw the contours on the original image
     contoursImg = frame.copy()
-    cv2.drawContours(contoursImg, contours, -1, (0, 255, 0), 2)
+    cv2.drawContours(contoursImg, contours, -1, (0, 255, 0), 3)
     contoursImg = cv2.cvtColor(contoursImg, cv2.COLOR_BGR2RGB)
     axes[1, 1].imshow(contoursImg)
     axes[1, 1].set_title("Contours")
@@ -67,7 +67,7 @@ def imageMorphology():
         if rect[1][0] * rect[1][1] > 250:
             box = cv2.boxPoints(rect)
             box = np.int0(box)
-            cv2.drawContours(boxedImage,[box],0,(0,0,255),2)
+            cv2.drawContours(boxedImage,[box],0,(0,0,255),3)
     
     cv2.imshow('Final', boxedImage)
     final = cv2.cvtColor(boxedImage, cv2.COLOR_BGR2RGB)
@@ -96,7 +96,7 @@ def videoMorphology():
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # # ret, threshold = cv2.threshold(frame, 120, 255, cv2.THRESH_BINARY)
-        threshold = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 51, 10)
+        threshold = cv2.adaptiveThreshold(gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 75, 15)
         # cv2.imshow('threshold', threshold)
 
         # Apply Morphology
